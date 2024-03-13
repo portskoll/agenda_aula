@@ -14,9 +14,11 @@ from django.contrib import messages
 def login_user(request):
     return render(request, 'login.html')
 
-def evento(request, nome):
-    eve = Evento.objects.get(titulo=nome)
-    return HttpResponse('<h1>{}</h1>'.format(eve))
+
+@login_required(login_url='/login/')
+def evento(request):
+
+    return render(request, 'evento.html')
 
 
 @login_required(login_url='/login/')
@@ -46,4 +48,14 @@ def submit_login(request):
 
 def logout_user(request):
     logout(request)
+    return redirect('/')
+
+
+def submit_evento(request):
+    if request.POST:
+        titulo = request.POST['titulo']
+        data_evento = request.POST['data_evento']
+        descricao = request.POST['descricao']
+        usuario = request.user
+        Evento.objects.create(titulo=titulo, data_evento=data_evento, descricao=descricao, usuario=usuario)
     return redirect('/')
